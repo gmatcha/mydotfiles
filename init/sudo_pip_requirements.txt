@@ -1,0 +1,6 @@
+virtualenvwrapper
+autoenv
+paramiko
+httplib2
+jinja2
+PyYAML

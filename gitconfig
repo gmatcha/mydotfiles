@@ -1,0 +1,48 @@
+[user]
+    name = gary
+[push]
+    default = current
+[alias]
+    makep = "!f() { \
+        git remote set-url --push origin $1; \
+      }; f"
+    makenp = "!git remote set-url --push origin no_push"
+    trackup = "!f() { \
+        git branch --set-upstream-to=master $1; \
+      }; f"
+    rewind1 = "!f() { reset --merge $1; }"
+    unstage = reset HEAD --
+    uncommit = reset --soft HEAD^
+    mup = !"git fetch origin -v; git fetch upstream -v; git merge upstream/master"
+    pullall = !"git pull; git submodule update --init --recursive"
+    diffc = diff --cached
+    dw = diff --word-diff
+    lg = !"git lgs"
+    lga = log --graph --abbrev-commit --decorate --format=format:'%C(bold blue)%h%C(reset) - %C(bold green)(%ar)%C(reset) %C(white)%s%C(reset) %C(dim white)- %an%C(reset)%C(bold yellow)%d%C(reset)' --all
+    lgs = log --graph --abbrev-commit --decorate --format=format:'%C(bold blue)%h%C(reset) %C(dim red)[%G?]%C(reset) %C(bold green)(%ar)%C(reset) %C(white)%s%C(reset) %C(dim white)- %an%C(reset)%C(bold yellow)%d%C(reset)'
+    st = status
+    br = branch
+    fp = format-patch -M -n --stdout -s HEAD^ --start-number
+    rso = remote show origin
+    rsg = remote show github
+    tryp = push --dry-run
+    co = checkout
+    mt = !"git mergetool --tool=meld"
+[core]
+    editor = vim
+    filemode = false
+    excludesfile = ~/.files/gitignore
+[color]
+    ui = auto
+[diff]
+    tool = meld
+[difftool]
+    prompt = true
+[merge]
+    tool = meld
+[mergetool "meld"]
+    cmd = meld $LOCAL $BASE $REMOTE --output=$MERGED
+    trustExitCode = false
+    keepBackup = false
+    prompt = true
+

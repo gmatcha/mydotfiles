@@ -1,0 +1,25 @@
+# If not running interactively, don't do anything
+[[ ! $- == *i* ]] && return
+
+echo "" # blank line
+
+# echo last git commit
+NOW_PATH=$(pwd)
+GIT_PATH="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+cd $GIT_PATH
+LC_MSG="$(git log -n1 --format='%s')"
+LC_DATE="$(date -d @$(git log -n1 --format='%at') '+%Y-%m-%d %H:%M')"
+LC_HASH="$(git log -n1 --format='%h')"
+echo -e "\e[34m\e[1m * * * \e[0m[dotfiles.git] \e[4m$LC_DATE\e[0m \e[1m\e[94m$LC_MSG\e[0m ($LC_HASH)"
+cd $NOW_PATH
+
+# echo SSH key
+SSHKEY="$(ssh-add -l 2>&1)"
+if [ "$SSHKEY" == "Could not open a connection to your authentication agent." ] || [ "$SSHKEY" == "The agent has no identities." ];
+then
+	echo -e "\e[31m\e[1m * * * \e[0mNO SSH KEY LOADED \e[31m\e[1m * * * \e[0m"
+	ssh-add
+else
+	echo -e "\e[93m\e[1m * * * \e[0mSSH Key: \e[0m\e[92m$SSHKEY\e[0m"
+fi
+

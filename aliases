@@ -1,0 +1,133 @@
+## dot aliases file - ~/.files/aliases
+
+alias gitd='git describe'
+alias gsub='git submodule update --init'
+alias dsh='dsh -cM'
+alias ee='electron .'
+alias pi='ipython'
+alias ap='ansible-playbook'
+alias pur='dsh -g gridpar ~/pur.sh'
+alias mig='dsh -g gridpar ~/mig.sh'
+alias d2m='git checkout master && git merge develop && git push && git checkout develop && git merge master && git pull'
+alias ssar='sudo service apache2 restart'
+alias ssn='sudo service nginx restart'
+alias tail='tail -n 30'
+alias cgrep="grep -C 2 -n --color"
+alias cleanpyc="rm *.pyc; find . -name "*.pyc" -exec rm -rf {} \;"
+alias cleanorig="rm *.orig; find . -name "*.orig" -exec rm -rf {} \;"
+
+# tmux
+alias ta='tmux attach -t'
+alias tkss='tmux kill-session -t'
+alias tksv='tmux kill-server'
+alias tl='tmux list-sessions'
+# alias tmux=_zsh_tmux_plugin_run
+alias ts='tmux new-session -s'
+
+alias clipboard='xclip -sel clip'
+
+# ls updates
+alias ls='ls --color=auto --hide="*.pyc"'
+
+# psgrep
+function psgrep() { ps axuf | grep -v grep | grep "$@" -i --color=auto; }
+
+# docker bash
+function dbash() {
+    docker exec -i -t $1 /bin/bash
+}
+
+# resetdb
+function resetdb {
+ if [ -z "$1" ]; then
+    echo "Usage: resetdb [db_name] [syncdb]"
+ else
+    sudo -u postgres dropdb $1; sudo -u postgres createdb $1; echo "create extension postgis;create extension postgis_topology;" | sudo -u postgres psql -a $1;
+    if [ ! -z "$2" ]; then
+    	python manage.py syncdb
+   fi
+ fi
+}
+
+# startbitbucket
+function startbitbucket {
+    # Makes a non git directory to a new private bitbucket repository with all files added to initial commit
+    echo 'Username?'
+    read username
+    echo 'Password?'
+    read -s password
+    echo 'Repo name?'
+    read reponame
+
+    curl --user $username:$password https://api.bitbucket.org/1.0/repositories/ --data name=$reponame --data is_private='true'
+    git remote add origin git@bitbucket.org:$username/$reponame.git
+    git push -u origin --all
+    git push -u origin --tags
+}
+
+# compress/extract
+alias compress='tar -zcvf'
+function extract {
+ if [ -z "$1" ]; then
+    # display usage if no parameters given
+    echo "Usage: extract <path/file_name>.<zip|rar|bz2|gz|tar|tbz2|tgz|Z|7z|xz|ex|tar.bz2|tar.gz|tar.xz>"
+ else
+    if [ -f $1 ] ; then
+        # NAME=${1%.*}
+        # mkdir $NAME && cd $NAME
+        case $1 in
+          *.tar.bz2)   tar xvjf $1    ;;
+          *.tar.gz)    tar xvzf $1    ;;
+          *.tar.xz)    tar xvJf $1    ;;
+          *.lzma)      unlzma $1      ;;
+          *.bz2)       bunzip2 $1     ;;
+          *.rar)       unrar x -ad $1 ;;
+          *.gz)        gunzip $1      ;;
+          *.tar)       tar xvf $1     ;;
+          *.tbz2)      tar xvjf $1    ;;
+          *.tgz)       tar xvzf $1    ;;
+          *.zip)       unzip $1       ;;
+          *.Z)         uncompress $1  ;;
+          *.7z)        7z x $1        ;;
+          *.xz)        unxz $1        ;;
+          *.exe)       cabextract $1  ;;
+          *)           echo "extract: '$1' - unknown archive method" ;;
+        esac
+    else
+        echo "$1 - file does not exist"
+    fi
+fi
+}
+export -f extract
+
+# function pushall
+alias pushall="source ~/.bashrc && dsh -a -- 'cd .files && git pullall'"
+
+# ffmpeg
+function ffcut {
+    if [ -z "$1" ]; then
+        echo "Usage: ffcut [input file] 00:01:24 00:01:37 [output file]"
+    else
+        ffmpeg -i $1 -vcodec copy -acodec copy -ss $2 -to $3 -async 1 -strict -2 $4
+    fi
+}
+
+# gloc
+function gitloc {
+  git clone --depth 1 "$1" temp-linecount-repo &&
+  printf "('temp-linecount-repo' will be deleted automatically)\n\n\n" &&
+  cloc temp-linecount-repo &&
+  rm -rf temp-linecount-repo
+}
+
+# pipx
+function pipx {
+  while read line; do
+    echo $line
+    pip install $line
+  done < "$1"
+}
+
+# directory shortcuts
+alias cdotc="/opt/toolchains"
+

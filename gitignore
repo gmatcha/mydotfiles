@@ -1,0 +1,35 @@
+# global gitignore for IDE, etc
+# -- should still exclude project specific ignores in .gitignore
+
+# system junk
+.netrwhist
+.Trash-1000
+*.pyc
+npm-debug.log
+*.swp
+.*.swp
+
+# IDEs
+*.sublime-workspace
+*.sublime-project
+.env
+
+# preprocessors
+.sass-cache
+
+# private files
+id_rsa
+*.key
+
+# git mergetool
+*.orig
+*.BACKUP.*
+*.BASE.*
+*.LOCAL.*
+*.REMOTE.*
+
+# c/c++
+.cproject
+*.o
+
+
